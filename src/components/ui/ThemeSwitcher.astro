@@ -35,6 +35,8 @@ import { THEMES } from '../../utils/constants';
     background: var(--color-bg-alt);
     border-radius: var(--radius-full);
     border: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .theme-switcher__btn {
@@ -114,9 +116,10 @@ import { THEMES } from '../../utils/constants';
     const buttons = document.querySelectorAll<HTMLButtonElement>('[data-set-theme]');
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        const newTheme = btn.dataset.setTheme!;
-        applyTheme(newTheme);
-        localStorage.setItem(STORAGE_KEY, newTheme);
+        const newTheme = btn.getAttribute('data-set-theme');
+        if (newTheme) {
+          applyTheme(newTheme);
+        }
       });
     });
 
@@ -125,8 +128,9 @@ import { THEMES } from '../../utils/constants';
       localStorage.setItem(STORAGE_KEY, t);
 
       // Update ARIA states on buttons
-      buttons.forEach((btn) => {
-        const isActive = btn.dataset.setTheme === t;
+      const allButtons = document.querySelectorAll<HTMLButtonElement>('[data-set-theme]');
+      allButtons.forEach((btn) => {
+        const isActive = btn.getAttribute('data-set-theme') === t;
         btn.setAttribute('aria-checked', String(isActive));
         btn.setAttribute('role', 'radio');
       });

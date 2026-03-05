@@ -45,15 +45,16 @@ test.describe('Theme Switcher', () => {
     await page.goto('/');
 
     // Verify hero is visible with classic theme
-    await expect(page.locator('h1')).toBeVisible();
+    const heroName = page.locator('.hero__name').first();
+    await expect(heroName).toBeVisible();
 
     // Switch to bold
     await page.click('[data-set-theme="bold"]');
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(heroName).toBeVisible();
 
     // Switch to mono
     await page.click('[data-set-theme="mono"]');
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(heroName).toBeVisible();
 
     // All sections should still be visible
     await expect(page.locator('#about')).toBeVisible();

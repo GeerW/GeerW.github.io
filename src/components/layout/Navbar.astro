@@ -8,24 +8,31 @@
  * - Uses vanilla JS for the mobile toggle (no frameworks)
  */
 import { NAV_LINKS, SITE_TITLE } from '../../utils/constants';
+import ThemeSwitcher from '../ui/ThemeSwitcher.astro';
 
 const currentPath = Astro.url.pathname;
 ---
 
 <header class="navbar" role="banner">
   <nav class="navbar__inner" aria-label="Main navigation">
-    <a href="/" class="navbar__logo" aria-label="Home">
-      {SITE_TITLE.split('—')[0].trim()}
-    </a>
+    <div class="navbar__top-row">
+      <a href="/" class="navbar__logo" aria-label="Home">
+        {SITE_TITLE.split('—')[0].trim()}
+      </a>
 
-    <button
-      class="navbar__toggle"
-      aria-label="Toggle navigation menu"
-      aria-expanded="false"
-      aria-controls="nav-menu"
-    >
-      <span class="navbar__hamburger" aria-hidden="true"></span>
-    </button>
+      <button
+        class="navbar__toggle"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+      >
+        <span class="navbar__hamburger" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="navbar__actions">
+      <ThemeSwitcher />
+    </div>
 
     <div class="navbar__menu" id="nav-menu">
       <ul class="navbar__links">
@@ -52,7 +59,8 @@ const currentPath = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 100;
-    height: var(--nav-height);
+    height: auto;
+    min-height: var(--nav-height);
     background: var(--color-nav);
     backdrop-filter: var(--nav-blur);
     -webkit-backdrop-filter: var(--nav-blur);
@@ -62,12 +70,19 @@ const currentPath = Astro.url.pathname;
 
   .navbar__inner {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
+    flex-direction: column;
     max-width: var(--max-width);
     margin-inline: auto;
     padding-inline: var(--space-md);
+    padding-block: var(--space-xs);
+  }
+
+  .navbar__top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    order: 1;
   }
 
   .navbar__logo {
@@ -83,11 +98,65 @@ const currentPath = Astro.url.pathname;
     color: var(--color-accent);
   }
 
+  .navbar__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: var(--space-xs);
+    order: 3;
+  }
+
   /* Desktop menu */
   .navbar__menu {
     display: flex;
     align-items: center;
     gap: var(--space-lg);
+    order: 2;
+    margin-left: auto;
+  }
+
+  @media (min-width: 500px) {
+    .navbar__inner {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .navbar__top-row {
+      width: auto;
+    }
+
+    .navbar__menu {
+      display: flex !important; /* Ensure menu is visible on tablet/desktop */
+      order: 2;
+    }
+
+    .navbar__actions {
+      order: 3;
+      width: 100%; /* Forces themes to the next line */
+      margin-top: var(--space-xs);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .navbar__inner {
+      flex-wrap: nowrap;
+      height: var(--nav-height);
+      padding-block: 0;
+    }
+
+    .navbar__actions {
+      order: 2;
+      width: auto;
+      margin-top: 0;
+      margin-inline: var(--space-md);
+    }
+
+    .navbar__menu {
+      order: 3;
+      margin-left: auto;
+    }
   }
 
   .navbar__links {
@@ -177,24 +246,27 @@ const currentPath = Astro.url.pathname;
   }
 
   /* ─── Mobile ─── */
-  @media (max-width: 767px) {
+  @media (max-width: 499px) {
+    .navbar {
+      height: auto;
+    }
+
+    .navbar__inner {
+      padding-block: var(--space-xs);
+    }
+
     .navbar__toggle {
       display: flex;
     }
 
     .navbar__menu {
       display: none;
-      position: absolute;
-      top: var(--nav-height);
-      left: 0;
-      right: 0;
-      flex-direction: column;
-      gap: var(--space-sm);
-      padding: var(--space-md);
+      width: 100%;
+      flex-basis: 100%;
+      padding-block: var(--space-sm);
       background: var(--color-nav);
       backdrop-filter: var(--nav-blur);
       -webkit-backdrop-filter: var(--nav-blur);
-      border-bottom: 1px solid var(--color-border);
     }
 
     .navbar__menu.is-open {

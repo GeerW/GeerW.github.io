@@ -1,13 +1,21 @@
 import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'js-yaml';
+
+// Read profile data from YAML
+const profilePath = path.resolve('src/data/profile.yaml');
+const profileData = yaml.load(fs.readFileSync(profilePath, 'utf8')) as any[];
+const profile = profileData[0]; // Profile is an array with one entry
 
 test.describe('Homepage', () => {
   test('loads successfully and shows the hero section', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Elena Navarro/);
+    await expect(page).toHaveTitle(new RegExp(profile.name));
 
     // Hero section is visible
     const name = page.locator('h1');
-    await expect(name).toContainText('Elena Navarro');
+    await expect(name).toContainText(profile.name);
   });
 
   test('shows all main sections', async ({ page }) => {
